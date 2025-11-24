@@ -1,0 +1,264 @@
+@import "tailwindcss";
+
+/* -------------------------------
+   MODERN GLOBAL STYLES
+---------------------------------- */
+
+/* Import Inter font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+/* Smooth transitions for all interactive elements */
+* {
+    @apply transition-colors duration-300 ease-in-out;
+}
+
+/* Enhanced scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    @apply bg-slate-100 dark:bg-slate-800;
+}
+
+::-webkit-scrollbar-thumb {
+    @apply bg-slate-300 dark:bg-slate-600 rounded-full;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    @apply bg-slate-400 dark:bg-slate-500;
+}
+
+/* Base styles with modern color scheme */
+html,
+body {
+    @apply bg-gradient-to-br from-slate-50 via-white to-amber-50/30 
+           dark:from-slate-950 dark:via-slate-900 dark:to-slate-950
+           text-slate-900 dark:text-slate-100
+           antialiased;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    scroll-behavior: smooth;
+}
+
+/* Modern link styles */
+a {
+    @apply text-amber-600 dark:text-amber-400 
+           hover:text-amber-700 dark:hover:text-amber-300
+           transition-all duration-200;
+}
+
+/* Enhanced button styles - Responsive */
+.btn {
+    @apply px-4 py-2 sm:px-5 sm:py-2.5 
+           rounded-lg sm:rounded-xl 
+           text-sm sm:text-base
+           font-semibold
+           transition-all duration-300 ease-out
+           transform hover:scale-105 active:scale-95
+           shadow-md hover:shadow-lg
+           focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2
+           disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none;
+}
+
+.btn-primary {
+    @apply bg-gradient-to-r from-amber-500 to-amber-600
+           text-white
+           hover:from-amber-600 hover:to-amber-700
+           shadow-lg hover:shadow-xl
+           border border-amber-400/20;
+}
+
+.btn-outline {
+    @apply border-2 border-slate-300 dark:border-slate-600
+           text-slate-700 dark:text-slate-200
+           bg-white/50 dark:bg-slate-800/50
+           backdrop-blur-sm
+           hover:bg-slate-50 dark:hover:bg-slate-700
+           hover:border-amber-400 dark:hover:border-amber-500;
+}
+
+.btn-ghost {
+    @apply text-slate-700 dark:text-slate-300
+           hover:bg-slate-100 dark:hover:bg-slate-800
+           border-transparent;
+}
+
+.btn-sm {
+    @apply px-3 py-1.5 text-xs sm:text-sm rounded-lg;
+}
+
+.btn-lg {
+    @apply px-6 py-3 text-base sm:text-lg rounded-xl;
+}
+
+/* Modern input styles - Responsive */
+input,
+select,
+textarea {
+    @apply w-full
+           rounded-lg sm:rounded-xl 
+           border-2 border-slate-200 dark:border-slate-700
+           px-3 py-2 sm:px-4 sm:py-3
+           text-sm sm:text-base
+           bg-white/80 dark:bg-slate-800/80
+           backdrop-blur-sm
+           text-slate-900 dark:text-slate-100
+           placeholder:text-slate-400 dark:placeholder:text-slate-500
+           focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:ring-offset-2
+           focus:border-amber-500 dark:focus:border-amber-400
+           transition-all duration-200
+           shadow-sm
+           disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    @apply shadow-md;
+}
+
+/* Responsive form labels */
+label {
+    @apply block text-sm sm:text-base font-medium text-slate-700 dark:text-slate-300 mb-1 sm:mb-2;
+}
+
+/* Modern card styles with glassmorphism - Responsive */
+.card {
+    @apply bg-white/80 dark:bg-slate-800/80
+           backdrop-blur-md
+           border border-slate-200/50 dark:border-slate-700/50
+           rounded-xl sm:rounded-2xl
+           shadow-md hover:shadow-lg
+           transition-all duration-300
+           p-4 sm:p-5 md:p-6;
+}
+
+.card-hover {
+    @apply hover:-translate-y-1 hover:shadow-xl;
+}
+
+/* Responsive grid utilities */
+.grid-responsive {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 md:gap-6;
+}
+
+.grid-responsive-2 {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-8;
+}
+
+.grid-responsive-3 {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6;
+}
+
+/* Gradient text */
+.gradient-text {
+    @apply bg-gradient-to-r from-amber-600 to-amber-400
+           bg-clip-text text-transparent;
+}
+
+/* Modern badge styles */
+.badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full
+           text-xs font-semibold
+           shadow-sm;
+}
+
+.badge-primary {
+    @apply bg-amber-100 dark:bg-amber-900/30
+           text-amber-700 dark:text-amber-300;
+}
+
+.badge-success {
+    @apply bg-green-100 dark:bg-green-900/30
+           text-green-700 dark:text-green-300;
+}
+
+/* Loading spinner */
+.spinner {
+    @apply inline-block w-5 h-5 border-2 border-current border-t-transparent
+           rounded-full animate-spin;
+}
+
+/* Smooth page transitions */
+.page-transition {
+    animation: fadeIn 0.4s ease-out;
+}
+
+/* Selection styles */
+::selection {
+    @apply bg-amber-200 dark:bg-amber-800 text-slate-900 dark:text-slate-100;
+}
+
+/* Focus visible styles for accessibility */
+:focus-visible {
+    @apply outline-2 outline-offset-2 outline-amber-500 dark:outline-amber-400;
+}
+
+/* Print Styles */
+@media print {
+    nav,
+    header,
+    footer,
+    button,
+    .no-print {
+        display: none !important;
+    }
+
+    body {
+        @apply bg-white text-black;
+        font-size: 12pt;
+        line-height: 1.5;
+    }
+
+    main {
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .card,
+    div[class*="shadow"],
+    div[class*="border"] {
+        box-shadow: none !important;
+        border: 1px solid #e5e7eb !important;
+    }
+
+    img {
+        max-width: 100% !important;
+        height: auto !important;
+        page-break-inside: avoid;
+    }
+
+    h1, h2, h3 {
+        page-break-after: avoid;
+    }
+
+    a {
+        color: #000 !important;
+        text-decoration: underline;
+    }
+
+    a[href^="http"]:after {
+        content: " (" attr(href) ")";
+        font-size: 10pt;
+        color: #666;
+    }
+
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+
+    .no-break {
+        page-break-inside: avoid;
+    }
+}
