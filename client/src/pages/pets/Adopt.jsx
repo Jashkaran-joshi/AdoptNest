@@ -156,6 +156,7 @@ export default function Adopt() {
     if (pageNum !== currentPage) {
       setCurrentPage(pageNum);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
   // Edge case: Hide pagination when no items
