@@ -6,17 +6,17 @@
 
 ```
 ┌─────────────┐      ┌─────────────┐      ┌─────────────┐
-│   Vercel    │─────▶│    Render    │─────▶│ MongoDB     │
-│  (Frontend) │      │   (Backend) │      │   Atlas     │
+│    Vercel   │─────>│   Render    │─────>│  MongoDB    |
+│  (Frontend) │      │  (Backend)  │      │   Atlas     │
 │  React+Vite │      │  Express.js │      │  Database   │
 └─────────────┘      └─────────────┘      └─────────────┘
        │                    │
        └────────────────────┘
-              │
-       ┌──────▼──────┐
-       │  jsDelivr   │
-       │  (Images)   │
-       └─────────────┘
+                │
+         ┌──────▼──────┐
+         │  jsDelivr   │
+         │  (Images)   │
+         └─────────────┘
 ```
 
 ## Quick Start
