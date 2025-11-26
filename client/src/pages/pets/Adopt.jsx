@@ -24,12 +24,15 @@ export default function Adopt() {
   const [totalPages, setTotalPages] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Get initial page from URL or default to 1
+  // Sync page state with URL when URL changes (browser back/forward or programmatic navigation)
   useEffect(() => {
     const pageParam = searchParams.get("page");
     const pageNum = Math.max(1, parseInt(pageParam) || 1);
-    setCurrentPage(pageNum);
-  }, []);
+    if (pageNum !== currentPage) {
+      setCurrentPage(pageNum);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   // Redirect to adoption form if start parameter exists
   useEffect(() => {
@@ -87,9 +90,6 @@ export default function Adopt() {
           if (currentPage > 1) newParams.set("page", currentPage.toString());
           setSearchParams(newParams, { replace: true });
         }
-
-        // Scroll to top after data loads
-        scrollToTop();
         
       } catch (err) {
         console.error("[Adopt] Error loading pets:", err);
@@ -120,14 +120,24 @@ export default function Adopt() {
     setSearchParams(newParams, { replace: true });
   }, [filters.type, filters.age, filters.search, filters.location, setSearchParams]);
 
-  // Focus heading after page navigation (accessibility)
+  // Scroll to top and focus heading after page navigation
   useEffect(() => {
-    if (!loading && pageHeadingRef.current) {
-      // Small delay to ensure smooth scroll completes
-      const timer = setTimeout(() => {
+    if (!loading && currentPage > 0) {
+      // Scroll to top after content has loaded
+      // Use a small delay to ensure DOM is updated
+      const scrollTimer = setTimeout(() => {
+        scrollToTop();
+      }, 100);
+      
+      // Focus heading for accessibility after scroll
+      const focusTimer = setTimeout(() => {
         pageHeadingRef.current?.focus();
-      }, 500);
-      return () => clearTimeout(timer);
+      }, 600);
+      
+      return () => {
+        clearTimeout(scrollTimer);
+        clearTimeout(focusTimer);
+      };
     }
   }, [currentPage, loading]);
 
@@ -141,23 +151,11 @@ export default function Adopt() {
       } else {
         newParams.set("page", validPage.toString());
       }
+      // Update URL - the useEffect will sync currentPage from the URL
       setSearchParams(newParams, { replace: false }); // Use replace: false to allow browser back/forward
-      setCurrentPage(validPage);
-      
-      // Scroll to top immediately
-      scrollToTop();
+      // Don't set currentPage directly here - let the useEffect handle it to avoid race conditions
     }
   };
-
-  // Sync page state with URL when URL changes (browser back/forward)
-  useEffect(() => {
-    const pageParam = searchParams.get("page");
-    const pageNum = Math.max(1, parseInt(pageParam) || 1);
-    if (pageNum !== currentPage) {
-      setCurrentPage(pageNum);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
 
   // Edge case: Hide pagination when no items
   const shouldShowPagination = totalPages > 1 && pets.length > 0;
