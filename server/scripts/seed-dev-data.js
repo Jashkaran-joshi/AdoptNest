@@ -185,7 +185,7 @@ async function uploadImageToGitHubAndGetUrl(imageUrl, repoPath, category) {
     // Download image from placeholder URL
     console.log(`  📥 Downloading image for ${repoPath}...`);
     const imageBuffer = await downloadImageAsBuffer(imageUrl);
-    
+
     // Upload to GitHub
     console.log(`  📤 Uploading ${repoPath} to GitHub...`);
     await uploadFileToGitHub(
@@ -193,7 +193,7 @@ async function uploadImageToGitHubAndGetUrl(imageUrl, repoPath, category) {
       imageBuffer,
       `Add ${category} image: ${repoPath.split('/').pop()}`
     );
-    
+
     // Generate jsDelivr URL
     const cdnUrl = getJsDelivrUrl(repoPath, category);
     console.log(`  ✅ Uploaded and generated URL: ${cdnUrl}`);
@@ -222,7 +222,7 @@ function getImageUrlForSeed(imagePath, category, originalName = 'image.jpg') {
   if (imagePath && (imagePath.startsWith('http://') || imagePath.startsWith('https://'))) {
     return imagePath;
   }
-  
+
   // If jsDelivr is configured, generate CDN URL
   if (JSDELIVR_CONFIGURED) {
     try {
@@ -232,7 +232,7 @@ function getImageUrlForSeed(imagePath, category, originalName = 'image.jpg') {
       // Fallback to placeholder
     }
   }
-  
+
   // Fallback: use placeholder URL
   return getPlaceholderImageUrl(category, 800, 600, 0);
 }
@@ -247,7 +247,7 @@ async function downloadImageAsBuffer(imageUrl) {
     try {
       const client = imageUrl.startsWith('https:') ? https : http;
       const chunks = [];
-      
+
       const request = client.get(imageUrl, (response) => {
         // Handle redirects
         if (response.statusCode === 301 || response.statusCode === 302) {
@@ -255,28 +255,28 @@ async function downloadImageAsBuffer(imageUrl) {
             .then(resolve)
             .catch(reject);
         }
-        
+
         if (response.statusCode !== 200) {
           return reject(new Error(`Failed to download image: ${response.statusCode}`));
         }
-        
+
         response.on('data', (chunk) => {
           chunks.push(chunk);
         });
-        
+
         response.on('end', () => {
           resolve(Buffer.concat(chunks));
         });
-        
+
         response.on('error', (err) => {
           reject(err);
         });
       });
-      
+
       request.on('error', (err) => {
         reject(err);
       });
-      
+
       request.setTimeout(15000, () => {
         request.destroy();
         reject(new Error('Download timeout'));
@@ -299,21 +299,21 @@ async function downloadImage(imageUrl, category, originalName = 'image.jpg') {
     try {
       const categoryDir = UPLOAD_CATEGORIES[category] || UPLOAD_CATEGORIES.general;
       const uploadDir = path.join(baseUploadDir, categoryDir);
-      
+
       // Ensure directory exists
       if (!fs.existsSync(uploadDir)) {
         fs.mkdirSync(uploadDir, { recursive: true });
       }
-      
+
       // Generate filename
       const ext = path.extname(originalName) || '.jpg';
       const filename = generateFilename(category, `seed-${Date.now()}-${randomInt(1000, 9999)}${ext}`);
       const filePath = path.join(uploadDir, filename);
-      
+
       const client = imageUrl.startsWith('https:') ? https : http;
-      
+
       const file = fs.createWriteStream(filePath);
-      
+
       const request = client.get(imageUrl, (response) => {
         // Handle redirects
         if (response.statusCode === 301 || response.statusCode === 302) {
@@ -325,7 +325,7 @@ async function downloadImage(imageUrl, category, originalName = 'image.jpg') {
             .then(resolve)
             .catch(reject);
         }
-        
+
         if (response.statusCode !== 200) {
           file.close();
           if (fs.existsSync(filePath)) {
@@ -333,15 +333,15 @@ async function downloadImage(imageUrl, category, originalName = 'image.jpg') {
           }
           return reject(new Error(`Failed to download image: ${response.statusCode}`));
         }
-        
+
         response.pipe(file);
-        
+
         file.on('finish', () => {
           file.close();
           const imagePath = getImageUrl(category, filename);
           resolve(imagePath);
         });
-        
+
         file.on('error', (err) => {
           file.close();
           if (fs.existsSync(filePath)) {
@@ -350,7 +350,7 @@ async function downloadImage(imageUrl, category, originalName = 'image.jpg') {
           reject(err);
         });
       });
-      
+
       request.on('error', (err) => {
         file.close();
         if (fs.existsSync(filePath)) {
@@ -358,7 +358,7 @@ async function downloadImage(imageUrl, category, originalName = 'image.jpg') {
         }
         reject(err);
       });
-      
+
       request.setTimeout(10000, () => {
         request.destroy();
         file.close();
@@ -405,11 +405,11 @@ function getDemoImageUrl(category, width = 800, height = 600, index = 0) {
       'd1UPkiFd04A', '4_yh2DKELEw', 'r7WXJKOjS8w', 'mEZ3PoFGs_k', 'PIP0jdK7nYA'
     ]
   };
-  
+
   const images = categoryImages[category] || categoryImages.general;
   const imageIndex = index % images.length;
   const imageId = images[imageIndex];
-  
+
   // Use Unsplash Source API (free, no key required)
   // For seeding, we'll use placeholder service that provides reliable images
   return `https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=${width}&h=${height}&fit=crop&auto=format&q=80`;
@@ -429,15 +429,15 @@ function getPlaceholderImageUrl(category, width = 800, height = 600, index = 0) 
     surrenders: [237, 593, 659, 718, 237, 593, 659, 718, 237, 593],
     general: [1, 237, 354, 433, 475, 593, 659, 718, 1, 237]
   };
-  
+
   const seeds = categorySeeds[category] || categorySeeds.general;
   const seedIndex = index % seeds.length;
   const imageSeed = seeds[seedIndex] + (index * 10);
-  
+
   // For Firebase Storage integration, we'll use a placeholder service
   // In production, these will be uploaded to Firebase Storage
   // For now, use Picsum which provides reliable placeholder images
-  
+
   // Using a simple placeholder that works everywhere
   return `https://picsum.photos/seed/${imageSeed}/${width}/${height}`;
 }
@@ -514,12 +514,12 @@ function getBreedImageUrl(breed, type, index = 0) {
     'Californian': [6801, 6803, 6805, 6807],
     'New Zealand': [6901, 6903, 6905, 6907]
   };
-  
+
   // Get seed for this breed or use default
   const seeds = breedImageSeeds[breed] || [100 + index, 200 + index, 300 + index];
   const seedIndex = index % seeds.length;
   const imageSeed = seeds[seedIndex];
-  
+
   // Use placeholder service with breed-specific seed
   return `https://picsum.photos/seed/${imageSeed}/800/600`;
 }
@@ -538,15 +538,15 @@ function getSeedImageUrl(category, index = 0) {
 // Generate fake data
 async function generateUsers() {
   const users = [];
-  
+
   // Create exactly 2 admin users with specified credentials
   console.log(`Creating ${CONFIG.adminUsers} admin users...`);
   const admin1Password = await bcrypt.hash('123456', 10);
   const admin2Password = await bcrypt.hash('admin@123', 10);
-  
+
   users.push({
     name: 'Jashkaran Joshi',
-    email: 'Jashkaranjoshi@gmail.com',
+    email: 'admin@adoptnest.com',
     password: admin1Password,
     phone: `+91${randomInt(7000000000, 9999999999)}`,
     city: random(cities),
@@ -556,10 +556,10 @@ async function generateUsers() {
     createdAt: randomDate(0, 180),
     updatedAt: randomDate(0, 180)
   });
-  
+
   users.push({
     name: 'Admin User',
-    email: 'Admin@gmail.com',
+    email: 'admin2@adoptnest.com',
     password: admin2Password,
     phone: `+91${randomInt(7000000000, 9999999999)}`,
     city: random(cities),
@@ -569,17 +569,17 @@ async function generateUsers() {
     createdAt: randomDate(0, 180),
     updatedAt: randomDate(0, 180)
   });
-  
+
   // Create exactly 25 normal users with password "user@123"
   console.log(`Generating ${CONFIG.normalUsers} normal users...`);
   const userPassword = await bcrypt.hash('user@123', 10);
-  
+
   // Create unique combinations for users
   const usedNames = new Set();
   for (let i = 0; i < CONFIG.normalUsers; i++) {
     let firstName, lastName, email;
     let attempts = 0;
-    
+
     // Ensure unique names and emails
     do {
       firstName = random(firstNames);
@@ -587,9 +587,9 @@ async function generateUsers() {
       email = `${firstName.toLowerCase()}${lastName.toLowerCase()}${i + 1}@gmail.com`;
       attempts++;
     } while (usedNames.has(email) && attempts < 100);
-    
+
     usedNames.add(email);
-    
+
     users.push({
       name: `${firstName} ${lastName}`,
       email: email,
@@ -603,7 +603,7 @@ async function generateUsers() {
       updatedAt: randomDate(0, 180)
     });
   }
-  
+
   console.log(`✅ Generated ${users.length} users (${CONFIG.adminUsers} admins, ${CONFIG.normalUsers} normal users)`);
   return users;
 }
@@ -614,11 +614,11 @@ async function generatePets(users, downloadedImages = {}) {
   const types = ['Dog', 'Cat', 'Bird', 'Rabbit', 'Other'];
   const ageGroups = ['Young', 'Adult', 'Senior'];
   const genders = ['Male', 'Female'];
-  
+
   if (!users || users.length === 0) {
     throw new Error('Users array is required and must not be empty');
   }
-  
+
   // Generate or upload pet images
   if (GITHUB_AUTO_UPLOAD) {
     console.log('  Uploading pet images to GitHub and generating jsDelivr URLs...');
@@ -627,13 +627,13 @@ async function generatePets(users, downloadedImages = {}) {
   } else {
     console.log('  Using placeholder URLs for pet images...');
   }
-  
+
   const petImages = [];
   for (let i = 0; i < CONFIG.pets; i++) {
     try {
       const repoPath = `pets/pet-${i + 1}.jpg`;
       const placeholderUrl = getPlaceholderImageUrl('pets', 800, 600, i);
-      
+
       let imageUrl;
       if (GITHUB_AUTO_UPLOAD) {
         // Download placeholder, upload to GitHub, get jsDelivr URL
@@ -644,7 +644,7 @@ async function generatePets(users, downloadedImages = {}) {
         // Just generate URL (assumes file exists in repo)
         imageUrl = getImageUrlForSeed(repoPath, 'pets', `pet-${i + 1}.jpg`);
       }
-      
+
       petImages.push(imageUrl);
       if (i % 10 === 0) {
         if (GITHUB_AUTO_UPLOAD) {
@@ -659,7 +659,7 @@ async function generatePets(users, downloadedImages = {}) {
       petImages.push(getPlaceholderImageUrl('pets', 800, 600, i));
     }
   }
-  
+
   for (let i = 0; i < CONFIG.pets; i++) {
     const type = random(types);
     let breed = '';
@@ -667,33 +667,33 @@ async function generatePets(users, downloadedImages = {}) {
     else if (type === 'Cat') breed = random(catBreeds);
     else if (type === 'Bird') breed = random(birdBreeds);
     else if (type === 'Rabbit') breed = random(rabbitBreeds);
-    
+
     const age = randomInt(0, 15);
     let ageGroup = 'Adult';
     if (age < 2) ageGroup = 'Young';
     else if (age > 8) ageGroup = 'Senior';
-    
+
     const status = random(petStatuses);
     const randomUser = random(users);
     const createdBy = randomUser._id || randomUser.id;
-    
+
     const petName = random(petNames);
     const petType = type;
-    
+
     // Ensure required fields are set
     if (!petName || !petType) {
       console.error(`Error generating pet ${i + 1}: name=${petName}, type=${petType}`);
       continue;
     }
-    
+
     // Get breed-appropriate image
     let petImage = petImages[i] || getBreedImageUrl(breed, type, i);
-    
+
     // If breed-specific image generation is available, use it
     if (breed && !petImages[i]) {
       petImage = getBreedImageUrl(breed, type, i);
     }
-    
+
     // Create Indian-context appropriate descriptions
     const descriptions = {
       Dog: `A beautiful ${breed || 'dog'} looking for a loving home in ${random(cities)}. ${breed ? `This ${breed} is` : 'He/She is'} very friendly, well-behaved, and great with families. Perfect companion for Indian households. Ready for adoption!`,
@@ -702,7 +702,7 @@ async function generatePets(users, downloadedImages = {}) {
       Rabbit: `An adorable ${breed || 'rabbit'} available for adoption in ${random(cities)}. ${breed ? `This ${breed} is` : 'He/She is'} gentle, friendly, and perfect for families. Very easy to care for.`,
       Other: `A unique pet looking for a forever home in ${random(cities)}. Very friendly and perfect for Indian households.`
     };
-    
+
     pets.push({
       name: petName,
       type: petType,
@@ -721,7 +721,7 @@ async function generatePets(users, downloadedImages = {}) {
       updatedAt: randomDate(0, 120)
     });
   }
-  
+
   return pets;
 }
 
@@ -729,11 +729,11 @@ function generateAdoptionRequests(users, pets) {
   console.log(`Generating ${CONFIG.adoptionRequests} adoption requests...`);
   const requests = [];
   const availablePets = pets.filter(p => p.status === 'Available' || p.status === 'Pending');
-  
+
   for (let i = 0; i < CONFIG.adoptionRequests && i < availablePets.length; i++) {
     const user = random(users);
     const pet = availablePets[i % availablePets.length];
-    
+
     requests.push({
       petId: pet._id,
       applicantId: user._id,
@@ -770,7 +770,7 @@ function generateAdoptionRequests(users, pets) {
       updatedAt: randomDate(0, 60)
     });
   }
-  
+
   return requests;
 }
 
@@ -790,11 +790,11 @@ function generateSurrenders(users) {
     'Moving to a pet-restricted housing society',
     'Elderly parent unable to care for pet anymore'
   ];
-  
+
   for (let i = 0; i < CONFIG.surrenders; i++) {
     const user = random(users);
     const type = random(types);
-    
+
     surrenders.push({
       name: random(petNames),
       type: type,
@@ -810,7 +810,7 @@ function generateSurrenders(users) {
       updatedAt: randomDate(0, 90)
     });
   }
-  
+
   return surrenders;
 }
 
@@ -824,14 +824,14 @@ function generateBookings(users, pets) {
     'Daycare (per day)': 600,
     'Training Session': 2000
   };
-  
+
   for (let i = 0; i < CONFIG.bookings; i++) {
     const user = random(users);
     const service = random(services);
     const qty = randomInt(1, 3);
     const amount = servicePrices[service] * qty;
     const date = randomDate(0, 30); // Future dates
-    
+
     bookings.push({
       userId: user._id,
       petId: seededRandom() > 0.3 ? random(pets)._id : undefined, // 70% have pet
@@ -857,7 +857,7 @@ function generateBookings(users, pets) {
       updatedAt: randomDate(0, 45)
     });
   }
-  
+
   return bookings;
 }
 
@@ -877,7 +877,7 @@ async function generateStories(pets) {
     `As first-time pet owners in {city}, we were nervous about adopting. But AdoptNest made everything easy and provided wonderful guidance. {petName} has been the perfect addition to our family. We love watching {petName} play in our apartment balcony, go for walks in the neighborhood, and just be part of our daily lives. Adopting {petName} was one of the best decisions we've made.`,
     `We adopted {petName} thinking we were saving a life, but {petName} has saved us in so many ways. Living in busy {city}, life can be stressful, but {petName} brings calm and joy to our home. The unconditional love and loyalty {petName} shows us every day is amazing. AdoptNest helped us find the perfect match, and we're forever grateful for this wonderful pet in our lives.`
   ];
-  
+
   // Generate or upload story images
   if (GITHUB_AUTO_UPLOAD) {
     console.log('  Uploading story images to GitHub and generating jsDelivr URLs...');
@@ -886,13 +886,13 @@ async function generateStories(pets) {
   } else {
     console.log('  Using placeholder URLs for story images...');
   }
-  
+
   const storyImages = [];
   for (let i = 0; i < CONFIG.stories; i++) {
     try {
       const repoPath = `stories/story-${i + 1}.jpg`;
       const placeholderUrl = getPlaceholderImageUrl('stories', 800, 600, i);
-      
+
       let imageUrl;
       if (GITHUB_AUTO_UPLOAD) {
         imageUrl = await uploadImageToGitHubAndGetUrl(placeholderUrl, repoPath, 'stories');
@@ -900,14 +900,14 @@ async function generateStories(pets) {
       } else {
         imageUrl = getImageUrlForSeed(repoPath, 'stories', `story-${i + 1}.jpg`);
       }
-      
+
       storyImages.push(imageUrl);
     } catch (error) {
       console.warn(`  Warning: Could not process story image ${i + 1}: ${error.message}`);
       storyImages.push(getPlaceholderImageUrl('stories', 800, 600, i));
     }
   }
-  
+
   for (let i = 0; i < CONFIG.stories; i++) {
     const pet = adoptedPets[i] || { name: random(petNames), type: random(types) };
     const adopterName = `${random(firstNames)} ${random(lastNames)}`;
@@ -915,7 +915,7 @@ async function generateStories(pets) {
     // Replace placeholders in story template with pet name and city
     let story = random(storyTemplates).replace(/{petName}/g, pet.name);
     story = story.replace(/{city}/g, city);
-    
+
     stories.push({
       petName: pet.name,
       petType: pet.type || random(types),
@@ -931,7 +931,7 @@ async function generateStories(pets) {
       updatedAt: randomDate(0, 150)
     });
   }
-  
+
   return stories;
 }
 
@@ -942,12 +942,12 @@ function generateVolunteers() {
   const availabilities = ['Weekends only', 'Weekdays', 'Flexible', 'Evenings', 'Mornings', 'Full time'];
   const experiences = ['5+ years with pets', 'First time', 'Previous volunteer experience', 'Pet owner for 10+ years', 'Veterinary background'];
   const whys = ['Love animals', 'Want to give back', 'Have time to help', 'Passionate about animal welfare', 'Want to make a difference'];
-  
+
   for (let i = 0; i < CONFIG.volunteers; i++) {
     const firstName = random(firstNames);
     const lastName = random(lastNames);
     const email = `volunteer.${firstName.toLowerCase()}.${lastName.toLowerCase()}${i}@example.com`;
-    
+
     volunteers.push({
       name: `${firstName} ${lastName}`,
       email: email,
@@ -962,21 +962,21 @@ function generateVolunteers() {
       updatedAt: randomDate(0, 90)
     });
   }
-  
+
   return volunteers;
 }
 
 function generateDonations(users) {
   console.log(`Generating ${CONFIG.donations} donation contacts...`);
   const donations = [];
-  
+
   for (let i = 0; i < CONFIG.donations; i++) {
     const hasUser = seededRandom() > 0.4; // 60% from logged-in users
     const user = hasUser ? random(users) : null;
     const firstName = user ? user.name.split(' ')[0] : random(firstNames);
     const lastName = user ? user.name.split(' ')[1] : random(lastNames);
     const email = user ? user.email : `${firstName.toLowerCase()}.${lastName.toLowerCase()}${i}@example.com`;
-    
+
     const messages = [
       'Would like to support your mission',
       'Interested in monthly donations',
@@ -984,7 +984,7 @@ function generateDonations(users) {
       'Looking to make a one-time contribution',
       'Happy to help rescued animals'
     ];
-    
+
     donations.push({
       name: `${firstName} ${lastName}`,
       email: email,
@@ -997,14 +997,14 @@ function generateDonations(users) {
       updatedAt: randomDate(0, 120)
     });
   }
-  
+
   return donations;
 }
 
 async function generateBlogs() {
   console.log(`Generating ${CONFIG.blogs} blog posts...`);
   const blogs = [];
-  
+
   // Expanded blog titles with Indian context (50 titles)
   const titles = [
     'How to Care for Your Newly Adopted Pet in India',
@@ -1058,7 +1058,7 @@ async function generateBlogs() {
     'Understanding Pet Food Labels: Making Informed Choices',
     'Pet Care Myths Debunked: Indian Context'
   ];
-  
+
   // Expanded excerpts matching titles
   const excerpts = [
     'Essential tips for welcoming your new pet home in Indian households.',
@@ -1112,7 +1112,7 @@ async function generateBlogs() {
     'Making informed choices by understanding pet food labels.',
     'Debunking common pet care myths in Indian context.'
   ];
-  
+
   // Expanded content matching titles with Indian context
   const contents = [
     `When you bring a newly adopted pet home to your Indian household, it's essential to create a calm and welcoming environment. Indian homes often have specific challenges like hot weather, noise from festivals, and family dynamics. Give your pet time to adjust to their new surroundings, introduce them gradually to family members, and ensure they have a quiet space to retreat to. Consider the climate and provide adequate cooling during summers.`,
@@ -1166,9 +1166,9 @@ async function generateBlogs() {
     `Understanding pet food labels helps in making informed choices for your pet's nutrition. Learn to read ingredient lists, nutritional information, and feeding guidelines. Indian pet food markets offer various options. Choose quality food appropriate for your pet's age, size, and health needs. Consult veterinarians for recommendations. Avoid foods with unnecessary fillers or harmful ingredients.`,
     `Many pet care myths exist in India that need debunking for proper pet care. Common myths include beliefs about feeding, behavior, health, and training. Consult with veterinarians and reliable sources for accurate information. Don't follow unverified advice from social media or neighbors. Evidence-based pet care ensures your pet's health and happiness.`
   ];
-  
+
   const authors = ['Dr. Priya Sharma', 'AdoptNest Team', 'Dr. Rajesh Kumar', 'Veterinary Expert', 'Pet Care Specialist', 'Dr. Anjali Mehta', 'Rescue Coordinator', 'Animal Welfare Advocate', `${random(firstNames)} ${random(lastNames)}`, 'Dr. Vikram Singh'];
-  
+
   // Generate or upload blog images
   if (GITHUB_AUTO_UPLOAD) {
     console.log('  Uploading blog images to GitHub and generating jsDelivr URLs...');
@@ -1177,13 +1177,13 @@ async function generateBlogs() {
   } else {
     console.log('  Using placeholder URLs for blog images...');
   }
-  
+
   const blogImages = [];
   for (let i = 0; i < CONFIG.blogs; i++) {
     try {
       const repoPath = `blog/blog-${i + 1}.jpg`;
       const placeholderUrl = getPlaceholderImageUrl('blog', 1200, 630, i);
-      
+
       let imageUrl;
       if (GITHUB_AUTO_UPLOAD) {
         imageUrl = await uploadImageToGitHubAndGetUrl(placeholderUrl, repoPath, 'blog');
@@ -1197,14 +1197,14 @@ async function generateBlogs() {
           console.log(`    Generated ${i + 1}/${CONFIG.blogs} jsDelivr URLs...`);
         }
       }
-      
+
       blogImages.push(imageUrl);
     } catch (error) {
       console.warn(`  Warning: Could not process blog image ${i + 1}: ${error.message}`);
       blogImages.push(getPlaceholderImageUrl('blog', 1200, 630, i));
     }
   }
-  
+
   // Generate exactly CONFIG.blogs (50) blog posts
   for (let i = 0; i < CONFIG.blogs; i++) {
     const title = titles[i % titles.length];
@@ -1212,7 +1212,7 @@ async function generateBlogs() {
     const content = contents[i % contents.length];
     const slug = slugify(title);
     const readTime = random(['3 min', '5 min', '7 min', '10 min']);
-    
+
     blogs.push({
       title: title,
       slug: `${slug}-${i + 1}`,
@@ -1229,7 +1229,7 @@ async function generateBlogs() {
       updatedAt: randomDate(0, 180)
     });
   }
-  
+
   return blogs;
 }
 
@@ -1246,7 +1246,7 @@ function generateMessages() {
     'Feedback',
     'Partnership Inquiry'
   ];
-  
+
   const messageTemplates = [
     'I am interested in adopting a {type}. Can you provide more information?',
     'I have a question about your adoption process.',
@@ -1257,14 +1257,14 @@ function generateMessages() {
     'Thank you for the great work you do!',
     'I would like to discuss a potential partnership.'
   ];
-  
+
   for (let i = 0; i < CONFIG.messages; i++) {
     const firstName = random(firstNames);
     const lastName = random(lastNames);
     const email = `${firstName.toLowerCase()}.${lastName.toLowerCase()}${i}@example.com`;
     const type = random(['dog', 'cat', 'pet']);
     const message = random(messageTemplates).replace(/{type}/g, type);
-    
+
     messages.push({
       name: `${firstName} ${lastName}`,
       email: email,
@@ -1274,19 +1274,19 @@ function generateMessages() {
       updatedAt: randomDate(0, 90)
     });
   }
-  
+
   return messages;
 }
 
 // Main seeding function
 async function seedDatabase() {
   const mongoUri = process.env.MONGODB_URI_DEV || process.env.MONGODB_URI;
-  
+
   if (!mongoUri) {
     console.error('❌ Error: MONGODB_URI_DEV or MONGODB_URI environment variable is required');
     process.exit(1);
   }
-  
+
   // Safety check - ensure it's MongoDB Atlas
   if (!mongoUri.startsWith('mongodb+srv://')) {
     console.error('❌ Error: This script requires MongoDB Atlas connection string');
@@ -1294,7 +1294,7 @@ async function seedDatabase() {
     console.error('   Expected format: mongodb+srv://username:password@cluster.mongodb.net/database');
     process.exit(1);
   }
-  
+
   // Safety check - ensure it's a dev/test database
   const dbName = mongoUri.split('/').pop()?.split('?')[0] || '';
   if (!dbName.includes('dev') && !dbName.includes('test')) {
@@ -1307,7 +1307,7 @@ async function seedDatabase() {
       console.warn('⚠️  WARNING: FORCE_SEED=true is set. Seeding production database!');
     }
   }
-  
+
   // Validate GitHub token if auto-upload is enabled
   if (GITHUB_AUTO_UPLOAD) {
     console.log('🔐 Validating GitHub token...');
@@ -1321,12 +1321,12 @@ async function seedDatabase() {
     }
     console.log('✅ GitHub token validated\n');
   }
-  
+
   try {
     console.log('🔌 Connecting to MongoDB...');
     await mongoose.connect(mongoUri);
     console.log('✅ Connected to MongoDB\n');
-    
+
     // Clear existing data (optional - comment out if you want to keep existing data)
     console.log('🗑️  Clearing existing data...');
     await User.deleteMany({});
@@ -1340,52 +1340,52 @@ async function seedDatabase() {
     await BlogPost.deleteMany({});
     await ContactMessage.deleteMany({});
     console.log('✅ Cleared existing data\n');
-    
+
     // Generate and insert data
     const users = await User.insertMany(await generateUsers());
     console.log(`✅ Inserted ${users.length} users\n`);
-    
+
     // Ensure users array is valid before generating pets
     if (!users || users.length === 0) {
       throw new Error('No users were created. Cannot generate pets without users.');
     }
-    
+
     // Generate pets with downloaded images
     const petsData = await generatePets(users);
     if (!petsData || petsData.length === 0) {
       throw new Error('No pets were generated');
     }
-    
+
     const pets = await Pet.insertMany(petsData);
     console.log(`✅ Inserted ${pets.length} pets\n`);
-    
+
     const adoptions = await Adoption.insertMany(generateAdoptionRequests(users, pets));
     console.log(`✅ Inserted ${adoptions.length} adoption requests\n`);
-    
+
     // Generate surrenders with downloaded images
     const surrenders = await Surrender.insertMany(await generateSurrenders(users));
     console.log(`✅ Inserted ${surrenders.length} surrenders\n`);
-    
+
     const bookings = await Booking.insertMany(generateBookings(users, pets));
     console.log(`✅ Inserted ${bookings.length} bookings\n`);
-    
+
     // Generate stories with downloaded images
     const stories = await SuccessStory.insertMany(await generateStories(pets));
     console.log(`✅ Inserted ${stories.length} success stories\n`);
-    
+
     const volunteers = await Volunteer.insertMany(generateVolunteers());
     console.log(`✅ Inserted ${volunteers.length} volunteers\n`);
-    
+
     const donations = await DonationContact.insertMany(generateDonations(users));
     console.log(`✅ Inserted ${donations.length} donation contacts\n`);
-    
+
     // Generate blogs with downloaded images
     const blogs = await BlogPost.insertMany(await generateBlogs());
     console.log(`✅ Inserted ${blogs.length} blog posts\n`);
-    
+
     const messages = await ContactMessage.insertMany(generateMessages());
     console.log(`✅ Inserted ${messages.length} contact messages\n`);
-    
+
     // Summary
     console.log('\n📊 Seeding Summary:');
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
@@ -1404,12 +1404,12 @@ async function seedDatabase() {
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     console.log(`\n✅ Database seeding completed successfully!`);
     console.log(`\n🔐 Admin Credentials:`);
-    console.log(`   1. Email: Jashkaranjoshi@gmail.com, Password: 123456`);
-    console.log(`   2. Email: Admin@gmail.com, Password: admin@123`);
+    console.log(`   1. Email: admin@adoptnest.com, Password: 123456`);
+    console.log(`   2. Email: admin2@adoptnest.com, Password: admin@123`);
     console.log(`\n👥 Normal User Password: user@123 (for all 25 users)`);
     console.log(`\n📝 Note: Analytics collection not created (model not found)`);
     console.log(`   You can create analytics data separately if needed.\n`);
-    
+
   } catch (error) {
     console.error('❌ Error seeding database:', error);
     throw error;
