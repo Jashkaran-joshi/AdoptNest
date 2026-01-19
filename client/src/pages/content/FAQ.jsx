@@ -39,10 +39,10 @@ const FAQItem = ({ q, a, openId, id, setOpenId }) => {
         <div className="text-sm text-slate-700 dark:text-slate-300">
           {Array.isArray(a)
             ? a.map((p, i) => (
-                <p key={i} className="mb-2">
-                  {p}
-                </p>
-              ))
+              <p key={i} className="mb-2">
+                {p}
+              </p>
+            ))
             : <p className="mb-2">{a}</p>}
         </div>
       </div>
@@ -105,7 +105,7 @@ export default function FAQ() {
     {
       id: "f7",
       q: "Do you offer foster or volunteer opportunities?",
-      a: "Yes. We frequently need foster homes and volunteers for transport, events, and socialization. Visit our Contact page to sign up or email jashkaranjoshi@gmail.com.",
+      a: "Yes. We frequently need foster homes and volunteers for transport, events, and socialization. Visit our Contact page to sign up or email contact@adoptnest.com.",
     },
     {
       id: "f8",

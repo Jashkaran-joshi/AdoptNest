@@ -88,7 +88,7 @@ export default function ViewItem() {
   const petId = item.petId || item.pet?._id || item.pet?.id;
   const petName = pet?.name || item.petName || item.name || "Unknown Pet";
   const petImg = pet?.image || item.image;
-  
+
   // Handle image URL - use utility function for consistent handling
   const imageUrl = getImageUrlWithFallback(petImg, 'https://via.placeholder.com/600x400/e2e8f0/64748b?text=Pet+Image');
 
@@ -146,8 +146,8 @@ export default function ViewItem() {
 
   const headerTitle =
     type === "request" ? "Adoption Request" :
-    type === "given" ? "Given Pet" :
-    type === "booking" ? "Booking Details" : "Details";
+      type === "given" ? "Given Pet" :
+        type === "booking" ? "Booking Details" : "Details";
 
   return (
     <main className="max-w-4xl mx-auto py-8 px-4">
@@ -167,9 +167,9 @@ export default function ViewItem() {
         {/* Left: image + location */}
         <div className="md:col-span-1">
           <div className="w-full h-56 rounded overflow-hidden border border-slate-100 dark:border-slate-700">
-            <img 
-              src={imageUrl} 
-              alt={petName} 
+            <img
+              src={imageUrl}
+              alt={petName}
               className="w-full h-full object-cover"
               onError={(e) => {
                 e.target.src = 'https://via.placeholder.com/600x400/e2e8f0/64748b?text=Pet+Image';
@@ -232,7 +232,7 @@ export default function ViewItem() {
                 </div>
                 <div>
                   <div className="text-sm text-slate-500">Contact</div>
-                  <div className="font-medium text-slate-900 dark:text-white">{item.contact || "jashkaranjoshi@gmail.com"}</div>
+                  <div className="font-medium text-slate-900 dark:text-white">{item.contact || "contact@adoptnest.com"}</div>
                 </div>
               </>
             )}
