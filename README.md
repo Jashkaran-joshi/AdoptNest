@@ -1,4 +1,4 @@
-# AdoptNest 🐾
+# AdoptNest 🐾 
 
 **A full-stack pet adoption platform** connecting rescued pets with loving families.
 
